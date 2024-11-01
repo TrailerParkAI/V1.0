@@ -1,0 +1,94 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id                String         @id @default(uuid())
+  email             String         @unique
+  password          String
+  name              String
+  phoneNumber       String?
+  profilePictureUrl String?
+  role              String
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+  refreshTokens     RefreshToken[]
+  client            Client?
+  artist            Artist?
+  studio            Studio?
+}
+
+model RefreshToken {
+  id        String   @id @default(uuid())
+  token     String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Client {
+  id                     String   @id @default(uuid())
+  userId                 String   @unique
+  user                   User     @relation(fields: [userId], references: [id])
+  tattooPreferences     Json
+  galleryIds            String[]
+  favoriteArtists       String[]
+  bookingHistory        String[]
+  notificationPreferences Json
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+}
+
+model Artist {
+  id               String   @id @default(uuid())
+  userId           String   @unique
+  user             User     @relation(fields: [userId], references: [id])
+  portfolio        Json
+  studioId         String?
+  rating           Float
+  socialMediaLinks Json
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
+
+model Studio {
+  id          String   @id @default(uuid())
+  userId      String   @unique
+  user        User     @relation(fields: [userId], references: [id])
+  name        String
+  location    Json
+  artistIds   String[]
+  contactInfo Json
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Booking {
+  id                String   @id @default(uuid())
+  clientId          String
+  artistId          String
+  studioId          String?
+  appointmentDate   DateTime
+  status            String
+  depositAmount     Float
+  cancellationReason String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}
+
+model Payment {
+  id            String   @id @default(uuid())
+  bookingId     String
+  amount        Float
+  status        String
+  paymentMethod String
+  transactionId String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}

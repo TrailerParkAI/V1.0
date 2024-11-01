@@ -1,0 +1,16 @@
+{
+  "name": "inqut",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev:web": "cd apps/web && npm run dev",
+    "dev:mobile": "cd apps/mobile && ns preview",
+    "build:web": "cd apps/web && npm run build"
+  },
+  "devDependencies": {
+    "typescript": "~5.4.0"
+  }
+}
